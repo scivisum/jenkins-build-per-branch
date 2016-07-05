@@ -5,12 +5,12 @@ class BranchView {
     String branchName
 
     public String getViewName() {
-		if(templateJobPrefix) {
-	        return "$templateJobPrefix-$safeBranchName"
-		}
-		else {
-			return safeBranchName
-		}
+        if(templateJobPrefix) {
+            return "$templateJobPrefix-$safeBranchName"
+        }
+        else {
+            return safeBranchName
+        }
     }
 
     public String getSafeBranchName() {
