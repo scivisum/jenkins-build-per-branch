@@ -69,7 +69,8 @@ class JenkinsApi {
 
     void startJob(ConcreteJob job) {
         println "Starting job ${job.jobName}."
-        post('job/' + job.jobName + '/build')
+        Map body = [Submit: "Build", json: '{"parameter": {"name": "FLUSH_BUILD"}}']
+        post('job/' + job.jobName + '/build', body)
     }
 
     String configForMissingJob(ConcreteJob missingJob, List<TemplateJob> templateJobs) {
