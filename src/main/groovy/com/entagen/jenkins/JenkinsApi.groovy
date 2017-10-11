@@ -69,7 +69,7 @@ class JenkinsApi {
 
     void startJob(ConcreteJob job) {
         println "Starting job ${job.jobName}."
-        Map body = [Submit: "Build", json: '{"parameter": {"name": "FLUSH_BUILD"}}']
+        Map body = [delay: "0sec", Submit: "Build", json: '{"parameter": {"name": "FLUSH_BUILD"}}']
         post('job/' + job.jobName + '/build', body)
     }
 
