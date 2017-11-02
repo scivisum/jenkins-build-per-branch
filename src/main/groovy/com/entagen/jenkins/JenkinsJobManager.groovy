@@ -12,7 +12,7 @@ class JenkinsJobManager {
     String viewRegex
     String jenkinsUser
     String jenkinsPassword
-    
+
     Boolean dryRun = false
     Boolean noViews = false
     Boolean noDelete = false
@@ -97,10 +97,10 @@ class JenkinsJobManager {
     List<TemplateJob> findRequiredTemplateJobs(List<String> allJobNames) {
         String regex = ""
 		if(templateJobPrefix) {
-			regex = /^($templateJobPrefix-[^-]*)-($templateBranchName)$/
+            regex = /^($templateJobPrefix-[^-]*(?:-[^-]*)?)-($templateBranchName)$/
 		}
 		else {
-			regex = /^([^-]*)-($templateBranchName)$/
+            regex = /^([^-]*(?:-[^-]*)?)-($templateBranchName)$/
 		}
 
         List<TemplateJob> templateJobs = allJobNames.findResults { String jobName ->
