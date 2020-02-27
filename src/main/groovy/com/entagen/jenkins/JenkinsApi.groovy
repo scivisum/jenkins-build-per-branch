@@ -51,7 +51,7 @@ class JenkinsApi {
         response.data.text
     }
 
-    void cloneJobForBranch(ConcreteJob missingJob, List<TemplateJob> templateJobs) {
+    boolean cloneJobForBranch(ConcreteJob missingJob, List<TemplateJob> templateJobs) {
         String missingJobConfig = configForMissingJob(missingJob, templateJobs)
         TemplateJob templateJob = missingJob.templateJob
 
@@ -62,9 +62,11 @@ class JenkinsApi {
         //Forced disable enable to work around Jenkins' automatic disabling of clones jobs
         //But only if the original job was enabled
         post('job/' + missingJob.jobName + '/disable')
-        if (!missingJobConfig.contains("<disabled>true</disabled>")) {
+        def enabled = !missingJobConfig.contains("<disabled>true</disabled>")
+        if (enabled) {
             post('job/' + missingJob.jobName + '/enable')
         }
+        return enabled
     }
 
     void startJob(ConcreteJob job) {
