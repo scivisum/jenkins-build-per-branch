@@ -92,8 +92,10 @@ class JenkinsApi {
             }
         }
 
-        if (["develop", "master"].contains(missingJob.branchName)) {
-            config = config.replaceAll("<ignorePostCommitHooks>false</ignorePostCommitHooks>", "<ignorePostCommitHooks>true</ignorePostCommitHooks>")
+        // our template jobs are now set to ignore post commit hooks:
+        // re-enable them for branches that are not managed by pipelines
+        if (!["develop", "master", "loadtesting_pre-production", "loadtesting_master"].contains(missingJob.branchName)) {
+            config = config.replaceAll("<ignorePostCommitHooks>true</ignorePostCommitHooks>", "<ignorePostCommitHooks>false</ignorePostCommitHooks>")
         }
 
         // this is in case there are other down-stream jobs that this job calls, we want to be sure we're replacing their names as well
