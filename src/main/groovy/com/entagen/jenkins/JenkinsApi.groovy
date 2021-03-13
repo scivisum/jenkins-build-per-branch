@@ -183,9 +183,10 @@ class JenkinsApi {
                 def response = restClient.get(path: "crumbIssuer/api/json")
 
                 if (response.data.crumbRequestField && response.data.crumb) {
-                    crumbInfo = [:]
-                    crumbInfo['field'] = response.data.crumbRequestField
-                    crumbInfo['crumb'] = response.data.crumb
+                    crumbInfo = [
+                        field: response.data.crumbRequestField,
+                        crumb: response.data.crumb,
+                    ]
                 }
                 else {
                     println "Found crumbIssuer but didn't understand the response data trying to move on."
