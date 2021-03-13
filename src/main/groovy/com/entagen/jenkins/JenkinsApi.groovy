@@ -161,7 +161,7 @@ class JenkinsApi {
             throw ex
         } catch (HttpResponseException ex) {
             def message = "Unexpected failure with path $jenkinsServerUrl${mapCopy.path}, HTTP Status Code: ${ex.response?.status}, full map: $mapCopy"
-            throw new Exception(message, ex)
+            throw new RuntimeException(message, ex)
         }
 
         assert response.status < 400
@@ -198,7 +198,7 @@ class JenkinsApi {
                 }
                 else {
                     def msg = "Unexpected failure on ${jenkinsServerUrl}crumbIssuer/api/json: ${resp.statusLine} ${resp.status}"
-                    throw new Exception(msg)
+                    throw new RuntimeException(msg)
                 }
             }
         }
@@ -223,7 +223,7 @@ class JenkinsApi {
         http.handler.failure = { resp ->
             def msg = "Unexpected failure on $jenkinsServerUrl$path: ${resp.statusLine} ${resp.status}"
             status = resp.statusLine.statusCode
-            throw new Exception(msg)
+            throw new RuntimeException(msg)
         }
 
         http.post(path: path, body: postBody, query: params,

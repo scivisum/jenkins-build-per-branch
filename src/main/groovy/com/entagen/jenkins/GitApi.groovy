@@ -53,7 +53,7 @@ class GitApi {
             String errorText = process.errorStream.text?.trim()
             println "error executing command: $command"
             println errorText
-            throw new Exception("Error executing command: $command -> $errorText")
+            throw new RuntimeException("Error executing command: $command -> $errorText")
         }
     }
 
