@@ -7,14 +7,13 @@ import static groovyx.net.http.ContentType.*
 import org.apache.http.conn.HttpHostConnectException
 import org.apache.http.client.HttpResponseException
 import org.apache.http.HttpStatus
-import org.apache.http.HttpRequestInterceptor
 import org.apache.http.protocol.HttpContext
 import org.apache.http.HttpRequest
 
 class JenkinsApi {
     String jenkinsServerUrl
     RESTClient restClient
-    HttpRequestInterceptor requestInterceptor
+    String jenkinsAuthStr = ""
     boolean findCrumb = true
     def crumbInfo
 
@@ -27,14 +26,8 @@ class JenkinsApi {
     public void addBasicAuth(String jenkinsServerUser, String jenkinsServerPassword) {
         println "use basic authentication"
 
-        this.requestInterceptor = new HttpRequestInterceptor() {
-            void process(HttpRequest httpRequest, HttpContext httpContext) {
-                def auth = jenkinsServerUser + ':' + jenkinsServerPassword
-                httpRequest.addHeader('Authorization', 'Basic ' + auth.bytes.encodeBase64().toString())
-            }
-        }
-
-        this.restClient.client.addRequestInterceptor(this.requestInterceptor)
+        def auth = jenkinsServerUser + ':' + jenkinsServerPassword
+        jenkinsAuthStr = 'Basic ' + auth.bytes.encodeBase64().toString()
     }
 
     List<String> getJobNames(String prefix = null) {
@@ -175,8 +168,9 @@ class JenkinsApi {
     protected Integer post(String path, postBody = [:], params = [:], ContentType contentType = ContentType.URLENC) {
         HTTPBuilder http = new HTTPBuilder(jenkinsServerUrl)
 
-        if (requestInterceptor) {
-            http.client.addRequestInterceptor(this.requestInterceptor)
+        def headers = [:]
+        if (!jenkinsAuthStr.empty) {
+            headers['Authorization'] = jenkinsAuthStr
         }
 
         Integer status = HttpStatus.SC_EXPECTATION_FAILED
@@ -187,7 +181,7 @@ class JenkinsApi {
             throw new RuntimeException(msg)
         }
 
-        http.post(path: path, body: postBody, query: params,
+        http.post(path: path, body: postBody, query: params, headers: headers,
                 requestContentType: contentType) { resp ->
             assert resp.statusLine.statusCode < 400
             status = resp.statusLine.statusCode
